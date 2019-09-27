@@ -93,7 +93,7 @@
     "babel-loader": "^8.0.6",
     "core-js": "^3.2.1",
     "eslint": "^5.16.0",
-    "eslint-plugin-jest": "^21.26.0",
+    "eslint-plugin-jest": "^22.17.0",
     "jest": "^24.8.0",
     "jest-runner-eslint": "^0.7.1",
     "jison": "^0.4.17",
