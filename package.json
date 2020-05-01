@@ -95,7 +95,7 @@
     "core-js": "^3.2.1",
     "eslint": "^5.16.0",
     "eslint-plugin-jest": "^21.26.0",
-    "jest": "^24.8.0",
+    "jest": "^25.5.3",
     "jest-runner-eslint": "^0.7.1",
     "jison": "^0.4.17",
     "preprocessor": "^1.4.0",
