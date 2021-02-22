@@ -1,3 +1,7 @@
+## master
+* Remove patching `window` 
+* Use create comments/text node/elements from `Dom` service
+
 ## 4.2.3
 * Rebuild
 

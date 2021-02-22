@@ -22,17 +22,30 @@ export class Figure {
         this.onRemove = [];
         this.blocks = {};
         this.thisRef = false;
+        this.domRef = false;
         this.requireDefaultNeed = true;
+        this.runtimeImports = new Set();
+        if ( parent === null ) {
+            this.runtimeImports.add( 'Component' );
+        }
+
     }
 
     generate() {
         let sn = sourceNode( '' );
 
+        if ( this.imports.length > 0 && this.requireDefaultNeed ) {
+
+            // eslint-disable-next-line max-len
+            sn.add( 'function __requireDefault( obj ) { return obj && obj.__esModule ? obj.default : obj; }\n\n' );
+        }
+
+        if ( this.runtimeImports.size > 0 ) {
+            const runtimeImports = Array.from( this.runtimeImports.values() ).join( ', ' );
+            sn.add( sourceNode( `import { ${runtimeImports} } from 'sham-ui';\n\n` ) );
+        }
+
         if ( this.imports.length > 0 ) {
-            if ( this.requireDefaultNeed ) {
-                // eslint-disable-next-line max-len
-                sn.add( 'function __requireDefault( obj ) { return obj && obj.__esModule ? obj.default : obj; }\n\n' );
-            }
             sn.add( sourceNode( this.imports ).join( '\n' ) );
             sn.add( '\n' );
         }
@@ -44,7 +57,7 @@ export class Figure {
 
         sn.add( [
             '\n',
-            `class ${this.name} extends __UI__.Component {\n`,
+            `class ${this.name} extends Component {\n`,
             '    constructor( options ) {\n',
             '        super( options );\n',
             '\n'
@@ -53,6 +66,13 @@ export class Figure {
         if ( this.thisRef ) {
             sn.add( [
                 '        const _this = this;\n',
+                '\n'
+            ] );
+        }
+
+        if ( this.domRef ) {
+            sn.add( [
+                '        const dom = this.dom;\n',
                 '\n'
             ] );
         }
@@ -307,6 +327,10 @@ export class Figure {
     addImport( source, requireDefaultNeed ) {
         this.imports.push( source );
         this.requireDefaultNeed = requireDefaultNeed;
+    }
+
+    addRuntimeImport( name ) {
+        this.root().runtimeImports.add( name );
     }
 
     addOnUpdate( node ) {

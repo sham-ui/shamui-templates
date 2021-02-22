@@ -14,7 +14,8 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'unsafe' + unsafeNumber;
-            figure.declare( sourceNode( `var ${placeholder} = document.createComment( 'unsafe' );` ) );
+            figure.domRef = true;
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( 'unsafe' );` ) );
         }
 
 

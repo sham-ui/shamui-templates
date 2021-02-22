@@ -1,4 +1,4 @@
-import { start, DI } from 'sham-ui';
+import { start, DI, Component, Map, loop, cond, insert } from 'sham-ui';
 import { Compiler } from '../src/index';
 import { sourceNode } from '../src/compiler/sourceNode';
 import { transformSync } from '@babel/core';
@@ -14,8 +14,17 @@ const compilerForSFC = new Compiler( {
 } );
 
 function evalComponent( code ) {
-    const fn = new Function( `var require=arguments[0];${code}return dummy;` );
-    return fn( require );
+    code = code.replace( /import { .+ } from 'sham-ui';/, '' );
+    const fn = new Function( [
+        'var require=arguments[0],',
+        'Component=arguments[1],',
+        'Map=arguments[2],',
+        'insert=arguments[3],',
+        'cond=arguments[4],',
+        'loop=arguments[5];',
+        `${code}return dummy;`
+    ].join( '' ) );
+    return fn( require, Component, Map, insert, cond, loop );
 }
 
 export function compile( strings ) {

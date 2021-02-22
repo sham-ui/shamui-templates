@@ -17,7 +17,8 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'for' + figure.uniqid( 'placeholder' );
-            figure.declare( sourceNode( `const ${placeholder} = document.createComment( 'if' );` ) );
+            figure.domRef = true;
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( 'if' );` ) );
         }
 
 
@@ -33,14 +34,15 @@ export default {
 
         figure.thisRef = true;
         figure.hasNested = true;
+        figure.addRuntimeImport( 'cond' );
 
         if ( variablesOfExpression.length > 0 ) {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
                     '                ',
                     node.otherwise ? 'result = ' : '',
-                    `__UI__.cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                        node.cond ), `, ${figure.getPathToDocument()} )`
+                    `cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                        node.cond ), `, ${figure.getPathToDocument()} );`
                 ] )
             );
 
@@ -48,7 +50,7 @@ export default {
                 figure.spot( variablesOfExpression ).add(
                     sourceNode( node.loc, [
                         '                ',
-                        `__UI__.cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`
+                        `cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} );`
                     ] )
                 ).declareVariable( 'result' );
             }
@@ -57,8 +59,8 @@ export default {
                 sourceNode( node.loc, [
                     '            ',
                     node.otherwise ? 'result = ' : '',
-                    `__UI__.cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                        node.cond ), `, ${figure.getPathToDocument()} )`
+                    `cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                        node.cond ), `, ${figure.getPathToDocument()} );`
                 ] )
             );
 
@@ -66,7 +68,7 @@ export default {
                 figure.addOnUpdate(
                     sourceNode( node.loc, [
                         '           ',
-                        `__UI__.cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`
+                        `cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} );`
                     ] )
                 ).declareVariable( 'result' );
             }

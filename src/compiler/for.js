@@ -15,10 +15,13 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'for' + figure.uniqid( 'placeholder' );
-            figure.declare( sourceNode( `const ${placeholder} = document.createComment( 'for' );` ) );
+            figure.domRef = true;
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( 'for' );` ) );
         }
 
-        figure.declare( sourceNode( `const ${childrenName} = new __UI__.Map();` ) );
+        figure.addRuntimeImport( 'loop' );
+        figure.addRuntimeImport( 'Map' );
+        figure.declare( sourceNode( `const ${childrenName} = new Map();` ) );
 
         // for (
 
@@ -29,7 +32,7 @@ export default {
         if ( variablesOfExpression.length > 0 ) {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
-                    `                __UI__.loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                    `                loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
                     compile( node.expr ),
                     ', ',
                     (
@@ -42,7 +45,7 @@ export default {
         }  else {
             figure.addOnUpdate(
                 sourceNode( node.loc, [
-                    `            __UI__.loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                    `            loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
                     compile( node.expr ),
                     ', ',
                     (

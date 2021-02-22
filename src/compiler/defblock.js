@@ -6,8 +6,9 @@ export default {
         const name = getStringLiteralValue( node.name );
         const placeholder = `${name}Block`;
         node.reference = placeholder;
+        figure.domRef = true;
         figure.declare(
-            sourceNode( `const ${placeholder} = document.createComment( '${name}' );` )
+            sourceNode( `const ${placeholder} = dom.comment( '${name}' );` )
         );
 
         figure.addRenderActions(

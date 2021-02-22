@@ -1,3 +1,4 @@
+import { DI } from 'sham-ui';
 import { compile, compileAsSFC, renderComponent } from './helpers';
 
 beforeEach( () => {
@@ -329,7 +330,9 @@ it( 'should work useblock if was update from block component', () => {
     );
     expect( component.container.textContent.trim() ).toBe( '' );
 
-    const displayContent = component.UI.find( x => x instanceof window.DisplayContent );
+    const displayContent = Array.from( DI.resolve( 'sham-ui:store' ).byId.values() ).find(
+        x => x instanceof window.DisplayContent
+    );
     displayContent.update( { condition: true } );
     expect( component.container.textContent.trim() ).toBe( 'Content' );
 

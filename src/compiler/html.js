@@ -5,9 +5,10 @@ export default {
     Element: ( { node, figure, compile } ) => {
         node.reference = node.name + figure.uniqid();
 
+        figure.domRef = true;
         figure.declare(
             sourceNode( node.loc,
-                `const ${node.reference} = document.createElement( '${node.name}' );` )
+                `const ${node.reference} = dom.el( '${node.name}' );` )
         );
 
         let children = node.body.map( ( child ) => compile( child ) ).filter( notNull );

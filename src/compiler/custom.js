@@ -15,7 +15,8 @@ export default {
             placeholder = parent.reference;
         } else {
             node.reference = placeholder = 'custom' + figure.uniqid( 'placeholder' );
-            figure.declare( sourceNode( `const ${placeholder} = document.createComment( '${node.name}' );` ) );
+            figure.domRef = true;
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( '${node.name}' );` ) );
         }
 
         figure.thisRef = true;
@@ -33,7 +34,7 @@ export default {
                 let [ expr ] = compileToExpression( figure, attr, compile );
                 const variables = collectVariables( figure.getScope(), expr );
                 let spreadSN = sourceNode( node.loc,
-                    `            __UI__.insert( _this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()} )`
+                    `            insert( _this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()} )`
                 );
                 if ( variables.length > 0 ) {
                     figure.spot( variables ).add( spreadSN );
@@ -55,7 +56,8 @@ export default {
         data = `{${data.join( ', ' )}}`;
 
 
-        const mountCode = `__UI__.insert( _this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()}, ${blockRef} )`;
+        figure.addRuntimeImport( 'insert' );
+        const mountCode = `insert( _this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()}, ${blockRef} )`;
 
         // Add spot for custom attribute or insert on render if no variables in attributes.
         if ( variables.length > 0 ) {

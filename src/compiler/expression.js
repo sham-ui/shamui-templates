@@ -53,8 +53,9 @@ export default {
             }
         }
 
+        figure.domRef = true;
         figure.declare(
-            sourceNode( `const ${node.reference} = document.createTextNode( ${defaultValue} );` )
+            sourceNode( `const ${node.reference} = dom.text( ${defaultValue} );` )
         );
 
         let variables = collectVariables( figure.getScope(), node.expression );
