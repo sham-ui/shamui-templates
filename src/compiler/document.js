@@ -8,7 +8,7 @@ export default {
         if ( options.asModule ) {
             return sourceNode( node.loc, [
                 figure.generate(), '\n',
-                `module.exports = ${figure.name};\n`
+                `export default ${figure.name};\n`
             ] );
         } else if ( options.asSingleFileComponent ) {
             return sourceNode( node.loc, [ figure.generate() ] );
