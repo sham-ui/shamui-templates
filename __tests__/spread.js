@@ -260,7 +260,7 @@ it( 'should work extend template with spread', async() => {
     );
     expect( html ).toBe(
         // eslint-disable-next-line max-len
-        ' <i>Before baz</i> <!--before--><i>foo</i><i>boo</i> <i>Inner baz</i> <!--inner--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After baz</i> <!--after--><!--SpreadCustom-->'
+        ' <i>Before baz</i> <!--0--><i>foo</i><i>boo</i> <i>Inner baz</i> <!--1--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After baz</i> <!--2--><!--0-->'
     );
 
     component.update( {
@@ -269,6 +269,6 @@ it( 'should work extend template with spread', async() => {
     } );
     expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
-        ' <i>Before Baz-Ya</i> <!--before--><i>foo</i><i>Boo-Ya</i> <i>Inner Baz-Ya</i> <!--inner--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After Baz-Ya</i> <!--after--><!--SpreadCustom-->'
+        ' <i>Before Baz-Ya</i> <!--0--><i>foo</i><i>Boo-Ya</i> <i>Inner Baz-Ya</i> <!--1--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After Baz-Ya</i> <!--2--><!--0-->'
     );
 } );

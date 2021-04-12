@@ -23,7 +23,7 @@ it( 'disable removeDataTest with if', () => {
             visible: true
         }
     );
-    expect( html ).toBe( '<div data-test-text="">test</div><!--if-->' );
+    expect( html ).toBe( '<div data-test-text="">test</div><!--0-->' );
 } );
 
 it( 'disable removeDataTest with for', () => {
@@ -39,6 +39,6 @@ it( 'disable removeDataTest with for', () => {
     );
     expect( html ).toBe(
         // eslint-disable-next-line max-len
-        '<div data-test-item="0">5</div><div data-test-item="1">6</div><div data-test-item="2">7</div><!--for-->'
+        '<div data-test-item="0">5</div><div data-test-item="1">6</div><div data-test-item="2">7</div><!--0-->'
     );
 } );

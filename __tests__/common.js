@@ -120,7 +120,7 @@ it( 'should place placeholders for multiply "if" tags', async() => {
         </div>
         `
     );
-    expect( html ).toBe( '<div><!--if--><!--if--></div>' );
+    expect( html ).toBe( '<div><!--0--><!--1--></div>' );
 } );
 
 it( 'should place placeholders for multiply "if" and "for" tags', async() => {
@@ -133,7 +133,7 @@ it( 'should place placeholders for multiply "if" and "for" tags', async() => {
         </div>
         `
     );
-    expect( html ).toBe( '<div><!--if--><!--for--></div>' );
+    expect( html ).toBe( '<div><!--0--><!--1--></div>' );
 } );
 
 
@@ -213,7 +213,7 @@ it( 'should support global variables', async() => {
         }
     );
     expect( first.html ).toBe(
-        '<i>expr, if<!--if-->, for<!--for-->, <i class="attr"></i></i>'
+        '<i>expr, if<!--0-->, for<!--1-->, <i class="attr"></i></i>'
     );
 
     const second = await renderComponent(

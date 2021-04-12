@@ -92,6 +92,13 @@ function UnsafeStatementNode( html, loc ) {
     this.loc = loc;
 }
 
+function LetStatementNode( identifier, expression, loc ) {
+    this.type = 'LetStatement';
+    this.identifier = identifier;
+    this.expression = expression;
+    this.loc = loc;
+}
+
 function FilterExpressionNode( callee, args, loc ) {
     this.type = 'FilterExpression';
     this.callee = callee;
@@ -232,6 +239,7 @@ ast.ForStatementNode = ForStatementNode;
 ast.DefBlockStatementNode = DefBlockStatementNode;
 ast.UseBlockStatementNode = UseBlockStatementNode;
 ast.UnsafeStatementNode = UnsafeStatementNode;
+ast.LetStatementNode = LetStatementNode;
 ast.FilterExpressionNode = FilterExpressionNode;
 ast.BindExpressionNode = BindExpressionNode;
 ast.ThisExpressionNode = ThisExpressionNode;

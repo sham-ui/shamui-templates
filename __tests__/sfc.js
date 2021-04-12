@@ -20,9 +20,9 @@ it( 'should single file component work', async() => {
             loaded: false
         }
     );
-    expect( html ).toBe( '<!--if-->' );
+    expect( html ).toBe( '<!--0-->' );
     component.update( { loaded: true } );
-    expect( component.container.innerHTML ).toBe( ' Loaded! <!--if-->' );
+    expect( component.container.innerHTML ).toBe( ' Loaded! <!--0-->' );
 } );
 
 it( 'should single file component correct work with options', async() => {
@@ -48,9 +48,9 @@ it( 'should single file component correct work with options', async() => {
             loaded: false
         }
     );
-    expect( html ).toBe( '<!--if-->' );
+    expect( html ).toBe( '<!--0-->' );
     component.update( { loaded: true } );
-    expect( component.container.innerHTML ).toBe( 'Text for content<!--if-->' );
+    expect( component.container.innerHTML ).toBe( 'Text for content<!--0-->' );
 } );
 
 it( 'should single file component correct work with imports', async() => {
@@ -109,7 +109,7 @@ it( 'should single file component correct work with context in blocks', async() 
         `
     );
     expect( html ).toBe(
-        '<div><div class="title"> Title text <!--title--></div></div><!--CustomPanel-->'
+        '<div><div class="title"> Title text <!--0--></div></div><!--0-->'
     );
 
     delete window.CustomPanel;
@@ -155,7 +155,7 @@ it( 'should work with class getters in if', () => {
             user: 'Joh Smith'
         }
     );
-    expect( html ).toBe( '<span>Joh Smith</span><!--if-->' );
+    expect( html ).toBe( '<span>Joh Smith</span><!--0-->' );
 } );
 
 it( 'should work with class getters in for', () => {

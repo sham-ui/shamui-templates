@@ -154,7 +154,7 @@ it( 'ref directive with custom tag', async() => {
         }
     );
     expect( html ).toBe(
-        '<div><div id="foo"><div id="custom">foo</div><!--Custom--></div></div>'
+        '<div><div id="foo"><div id="custom">foo</div><!--0--></div></div>'
     );
     expect( component.foo.id ).toBe( 'foo' );
     expect( component.bar ).toBe( undefined );

@@ -18,7 +18,7 @@ export default {
         } else {
             node.reference = placeholder = 'for' + figure.uniqid( 'placeholder' );
             figure.domRef = true;
-            figure.declare( sourceNode( `const ${placeholder} = dom.comment( 'if' );` ) );
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( '${figure.uniqid( 'comment' )}' );` ) );
         }
 
 
@@ -33,7 +33,6 @@ export default {
         const variablesOfExpression = collectVariables( figure.getScope(), node.cond );
 
         figure.thisRef = true;
-        figure.hasNested = true;
         figure.addRuntimeImport( 'cond' );
 
         if ( variablesOfExpression.length > 0 ) {
@@ -42,7 +41,7 @@ export default {
                     '                ',
                     node.otherwise ? 'result = ' : '',
                     `cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                        node.cond ), `, ${figure.getPathToDocument()} );`
+                        node.cond ), `, ${figure.getPathToDocument()} )`, node.otherwise ? ';' : ''
                 ] )
             );
 
@@ -60,7 +59,7 @@ export default {
                     '            ',
                     node.otherwise ? 'result = ' : '',
                     `cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
-                        node.cond ), `, ${figure.getPathToDocument()} );`
+                        node.cond ), `, ${figure.getPathToDocument()} )`, node.otherwise ? ';' : ''
                 ] )
             );
 
@@ -68,7 +67,8 @@ export default {
                 figure.addOnUpdate(
                     sourceNode( node.loc, [
                         '           ',
-                        `cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} );`
+                        `cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`,
+                        node.otherwise ? ';' : ''
                     ] )
                 ).declareVariable( 'result' );
             }

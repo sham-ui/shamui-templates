@@ -16,7 +16,7 @@ export default {
         } else {
             node.reference = placeholder = 'for' + figure.uniqid( 'placeholder' );
             figure.domRef = true;
-            figure.declare( sourceNode( `const ${placeholder} = dom.comment( 'for' );` ) );
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( '${figure.uniqid( 'comment' )}' );` ) );
         }
 
         figure.addRuntimeImport( 'loop' );

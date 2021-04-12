@@ -12,6 +12,7 @@ import for_ from './for';
 import unsafe from './unsafe';
 import defblock from './defblock';
 import useblock from './useblock';
+import let_ from './let';
 
 const compilers = Object.assign( {},
     document,
@@ -26,7 +27,8 @@ const compilers = Object.assign( {},
     for_,
     unsafe,
     defblock,
-    useblock
+    useblock,
+    let_
 );
 
 function next( parent, node, figure, options ) {

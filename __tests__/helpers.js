@@ -1,4 +1,5 @@
-import { start, DI, Component, Map, loop, cond, insert } from 'sham-ui';
+import { start, createDI, Component, Map, loop, cond, insert } from 'sham-ui';
+import setupUnsafe from 'sham-ui-unsafe';
 import { Compiler } from '../src/index';
 import { sourceNode } from '../src/compiler/sourceNode';
 import { transformSync } from '@babel/core';
@@ -68,16 +69,23 @@ export function compileAsSFC( strings ) {
 }
 
 export function renderComponent( componentConstructor, options = {} ) {
-    DI.resolve( 'sham-ui:store' ).clear();
+    const DI = 'DI' in options ?
+        options.DI :
+        createDI()
+    ;
+    setupUnsafe( DI );
+    DI.resolve( 'sham-ui:store' ).byId.clear();
     const body = document.querySelector( 'body' );
     body.innerHTML = '';
     const component = new componentConstructor( {
+        DI,
         ID: 'dummy',
         container: body,
         ...options
     } );
-    start();
+    start( DI );
     return {
+        DI,
         component,
         html: body.innerHTML,
         text: body.textContent

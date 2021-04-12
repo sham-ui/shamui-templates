@@ -1,4 +1,3 @@
-import { DI } from 'sham-ui';
 import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
@@ -14,7 +13,6 @@ beforeEach( () => {
     `;
 } );
 afterEach( () => {
-    DI.bind( 'logger', console );
     delete window.Tag;
     delete window[ 'custom_tag_with_loop' ];
 } );
@@ -93,10 +91,10 @@ it( 'should update variables in nested views', async() => {
             each: [ 1, 2, 3 ]
         }
     );
-    expect( html ).toBe( '<p>1<!--if-->1<!--if-->1<!--if--></p>' );
+    expect( html ).toBe( '<p>1<!--0-->1<!--0-->1<!--0--></p>' );
 
     component.update( { value: 7 } );
-    expect( component.container.innerHTML ).toBe( '<p>7<!--if-->7<!--if-->7<!--if--></p>' );
+    expect( component.container.innerHTML ).toBe( '<p>7<!--0-->7<!--0-->7<!--0--></p>' );
 } );
 
 it( 'if with custom tag', async() => {
@@ -113,13 +111,13 @@ it( 'if with custom tag', async() => {
             test: true
         }
     );
-    expect( html ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
+    expect( html ).toBe( '<div><div> Custom tag </div><!--0--></div>' );
 
     component.update( { test: false } );
     expect( component.container.innerHTML ).toBe( '<div></div>' );
 
     component.update( { test: true } );
-    expect( component.container.innerHTML ).toBe( '<div><div> Custom tag </div><!--Tag--></div>' );
+    expect( component.container.innerHTML ).toBe( '<div><div> Custom tag </div><!--0--></div>' );
 } );
 
 it( 'for with custom tag', async() => {
@@ -138,7 +136,7 @@ it( 'for with custom tag', async() => {
     );
     expect( html ).toBe(
         //eslint-disable-next-line max-len
-        '<div><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--></div>'
+        '<div><div> Custom tag </div><!--0--><div> Custom tag </div><!--0--><div> Custom tag </div><!--0--></div>'
     );
 
     component.update( { array: [] } );
@@ -146,7 +144,7 @@ it( 'for with custom tag', async() => {
 
     component.update( { array: [ 1, 3 ] } );
     expect( component.container.innerHTML ).toBe(
-        '<div><div> Custom tag </div><!--Tag--><div> Custom tag </div><!--Tag--></div>'
+        '<div><div> Custom tag </div><!--0--><div> Custom tag </div><!--0--></div>'
     );
 } );
 
@@ -190,7 +188,7 @@ it( 'should not update variables what exists only in inner scope', async() => {
     );
 
     expect( html ).toBe(
-        '<p><i>1</i><!--for--><i>2</i><!--for--><i>3</i><!--for--><!--for--></p>'
+        '<p><i>1</i><!--0--><i>2</i><!--0--><i>3</i><!--0--><!--0--></p>'
     );
 } );
 
@@ -225,7 +223,7 @@ it( 'should cache options variable data for loops', async() => {
 
     expect( html ).toBe(
         //eslint-disable-next-line max-len
-        '<ul><li class="selected"><span>USD</span>: US dollar</li><!--if--><li><span>EUR</span>: Euro</li><!--if--><li><span>AUD</span>: Australian dollar</li><!--if--></ul>'
+        '<ul><li class="selected"><span>USD</span>: US dollar</li><!--0--><li><span>EUR</span>: Euro</li><!--0--><li><span>AUD</span>: Australian dollar</li><!--0--></ul>'
     );
 
     const data2 = {
@@ -241,7 +239,7 @@ it( 'should cache options variable data for loops', async() => {
     component.update( data2 );
     expect( component.container.innerHTML ).toBe(
         //eslint-disable-next-line max-len
-        '<ul><li><span>USD</span>: US dollar</li><!--if--><li><span>EUR</span>: Euro</li><!--if--><li class="selected"><span>AUD</span>: Australian dollar</li><!--if--></ul>'
+        '<ul><li><span>USD</span>: US dollar</li><!--0--><li><span>EUR</span>: Euro</li><!--0--><li class="selected"><span>AUD</span>: Australian dollar</li><!--0--></ul>'
     );
 } );
 
@@ -283,7 +281,7 @@ it( 'loos should update two levels loops once', async() => {
     );
     expect( ReLoopMustNotMutateData.html ).toBe(
         //eslint-disable-next-line max-len
-        '<ol><li>red</li><li>green</li><li>blue</li><!--for--><li>red</li><li>green</li><li>blue</li><!--for--></ol>'
+        '<ol><li>red</li><li>green</li><li>blue</li><!--0--><li>red</li><li>green</li><li>blue</li><!--0--></ol>'
     );
 
     const ReLoopMustWorkWithSameNameLoops = await renderComponent(
@@ -302,7 +300,7 @@ it( 'loos should update two levels loops once', async() => {
     );
     expect( ReLoopMustWorkWithSameNameLoops.html ).toBe(
         //eslint-disable-next-line max-len
-        '<ol><li>red</li><li>green</li><li>blue</li><!--for--><li>red</li><li>green</li><li>blue</li><!--for--></ol>'
+        '<ol><li>red</li><li>green</li><li>blue</li><!--0--><li>red</li><li>green</li><li>blue</li><!--0--></ol>'
     );
 } );
 
@@ -336,13 +334,13 @@ it( 'loops with cond and outer scope', async() => {
     );
     expect( html ).toBe(
         //eslint-disable-next-line max-len
-        '<div><span>name1</span><span>value1</span><span>outer</span><!--if--><span>name2</span><span>value2</span><span>outer</span><!--if--></div>'
+        '<div><span>name1</span><span>value1</span><span>outer</span><!--0--><span>name2</span><span>value2</span><span>outer</span><!--0--></div>'
     );
     component.update( {
         outer: 'outer2'
     } );
     expect( component.container.innerHTML ).toBe(
         //eslint-disable-next-line max-len
-        '<div><span>name1</span><span>value1</span><span>outer2</span><!--if--><span>name2</span><span>value2</span><span>outer2</span><!--if--></div>'
+        '<div><span>name1</span><span>value1</span><span>outer2</span><!--0--><span>name2</span><span>value2</span><span>outer2</span><!--0--></div>'
     );
 } );

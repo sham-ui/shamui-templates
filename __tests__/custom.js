@@ -29,11 +29,11 @@ it( 'should properly work with attributes', async() => {
     );
     expect( html ).toBe(
         // eslint-disable-next-line max-len
-        '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>title</h1><div>content</div><!--CustomPanel--></div>'
+        '<div><h1>string</h1><div>text</div><!--0--><h1>title</h1><div>content</div><!--1--></div>'
     );
     component.update( { value: 'updated' } );
     expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
-        '<div><h1>string</h1><div>text</div><!--CustomPanel--><h1>updated</h1><div>content</div><!--CustomPanel--></div>'
+        '<div><h1>string</h1><div>text</div><!--0--><h1>updated</h1><div>content</div><!--1--></div>'
     );
 } );

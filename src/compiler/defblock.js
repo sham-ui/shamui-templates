@@ -8,7 +8,7 @@ export default {
         node.reference = placeholder;
         figure.domRef = true;
         figure.declare(
-            sourceNode( `const ${placeholder} = dom.comment( '${name}' );` )
+            sourceNode( `const ${placeholder} = dom.comment( '${figure.uniqid( 'comment' )}' );` )
         );
 
         figure.addRenderActions(

@@ -5,6 +5,8 @@ export default {
     Element: ( { node, figure, compile } ) => {
         node.reference = node.name + figure.uniqid();
 
+        figure.domRef = true;
+
         figure.declare( sourceNode( node.loc,
             `const ${node.reference} = document.createElementNS( 'http://www.w3.org/2000/svg', '${node.name}' );`
         ) );

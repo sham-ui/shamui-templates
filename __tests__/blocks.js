@@ -1,4 +1,3 @@
-import { DI } from 'sham-ui';
 import { compile, compileAsSFC, renderComponent } from './helpers';
 
 beforeEach( () => {
@@ -13,11 +12,17 @@ beforeEach( () => {
             {% defblock %}
         {% endif %}
     `;
+    window.TextContent = compile`
+        <span>
+            {% defblock %}
+        </span>
+    `;
 } );
 
 afterEach( () => {
     delete window.LinkTo;
     delete window.DisplayContent;
+    delete window.TextContent;
 } );
 
 it( 'should work with {% block "default" %}', () => {
@@ -34,7 +39,7 @@ it( 'should work with {% block "default" %}', () => {
         {}
     );
     expect( html ).toBe(
-        '<div><a> Text for content <!--default--></a></div>'
+        '<div><a> Text for content <!--0--></a></div>'
     );
 } );
 
@@ -67,7 +72,7 @@ it( 'should work with two named blocks', () => {
     );
     expect( html ).toBe(
         // eslint-disable-next-line max-len
-        '<div><div><div class="title"> Text for title <!--title--></div><div class="content"> Text for content <!--default--></div></div></div>'
+        '<div><div><div class="title"> Text for title <!--0--></div><div class="content"> Text for content <!--1--></div></div></div>'
     );
     delete window.CustomPanel;
 } );
@@ -88,7 +93,7 @@ it( 'should work with component arguments', () => {
         }
     );
     expect( html ).toBe(
-        '<div><a href="http://example.com"> Text for http://example.com <!--default--></a></div>'
+        '<div><a href="http://example.com"> Text for http://example.com <!--0--></a></div>'
     );
 
     component.update( {
@@ -96,7 +101,7 @@ it( 'should work with component arguments', () => {
     } );
     expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
-        '<div><a href="http://foo.example.com"> Text for http://foo.example.com <!--default--></a></div>'
+        '<div><a href="http://foo.example.com"> Text for http://foo.example.com <!--0--></a></div>'
     );
 } );
 
@@ -114,7 +119,7 @@ it( 'should work with component default block', () => {
         }
     );
     expect( html ).toBe(
-        '<div><a href="http://example.com"> Text for http://example.com<!--default--></a></div>'
+        '<div><a href="http://example.com"> Text for http://example.com<!--0--></a></div>'
     );
 
     component.update( {
@@ -122,7 +127,7 @@ it( 'should work with component default block', () => {
     } );
     expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
-        '<div><a href="http://foo.example.com"> Text for http://foo.example.com<!--default--></a></div>'
+        '<div><a href="http://foo.example.com"> Text for http://foo.example.com<!--0--></a></div>'
     );
 } );
 
@@ -146,21 +151,21 @@ it( 'should remove block in if', () => {
         }
     );
     expect( html ).toBe(
-        '<div class="content"> Text content for foo<!--default--></div><!--if--><!--VisibleBlock-->'
+        '<div class="content"> Text content for foo<!--0--></div><!--0--><!--0-->'
     );
 
     component.update( {
         visible: false,
         data: 'foz'
     } );
-    expect( component.container.innerHTML ).toBe( '<!--if--><!--VisibleBlock-->' );
+    expect( component.container.innerHTML ).toBe( '<!--0--><!--0-->' );
 
     component.update( {
         visible: true,
         data: 'foo'
     } );
     expect( component.container.innerHTML ).toBe(
-        '<div class="content"> Text content for foo<!--default--></div><!--if--><!--VisibleBlock-->'
+        '<div class="content"> Text content for foo<!--0--></div><!--0--><!--0-->'
     );
     delete window.VisibleBlock;
 } );
@@ -184,19 +189,19 @@ it( 'should work with two nested if', () => {
             red: false
         }
     );
-    expect( html ).toBe( '<!--if--><!--BigRedButton-->' );
+    expect( html ).toBe( '<!--0--><!--0-->' );
 
     component.update( {
         big: true
     } );
-    expect( component.container.innerHTML ).toBe( '<!--if--><!--if--><!--BigRedButton-->' );
+    expect( component.container.innerHTML ).toBe( '<!--0--><!--0--><!--0-->' );
 
     component.update( {
         red: true
     } );
     expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
-        '<button class="big red">This button big=true, red=true big &amp;&amp; red <!--default--></button><!--if--><!--if--><!--BigRedButton-->'
+        '<button class="big red">This button big=true, red=true big &amp;&amp; red <!--0--></button><!--0--><!--0--><!--0-->'
     );
     delete window.BigRedButton;
 } );
@@ -235,30 +240,28 @@ it( 'should work with defblock nested in useblock', () => {
     );
     expect( html ).toBe(
         // eslint-disable-next-line max-len
-        '<!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+        '<!--0--><!--0--><!--0--><!--0-->'
     );
 
     component.update( {
         loaded: true
     } );
     expect( component.container.innerHTML ).toBe(
-        // eslint-disable-next-line max-len
-        '<!--if--><!--default--><!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+        '<!--0--><!--0--><!--0--><!--0--><!--0--><!--0-->'
     );
 
     component.update( {
         visible: true
     } );
     expect( component.container.innerHTML ).toBe(
-        // eslint-disable-next-line max-len
-        '<!--if--><!--default--><!--if--><!--default--><!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+        '<!--0--><!--0--><!--0--><!--0--><!--0--><!--0--><!--0--><!--0-->'
     );
     component.update( {
         red: true
     } );
     expect( component.container.innerHTML ).toBe(
         // eslint-disable-next-line max-len
-        ' red &amp;&amp; loaded &amp; visible <!--default--><!--if--><!--default--><!--if--><!--default--><!--if--><!--LoadedContainer--><!--LoadedVisibleContainer--><!--RedLoadedVisibleContainer-->'
+        ' red &amp;&amp; loaded &amp; visible <!--0--><!--0--><!--0--><!--0--><!--0--><!--0--><!--0--><!--0--><!--0-->'
     );
     delete window.LoadedContainer;
     delete window.LoadedVisibleContainer;
@@ -288,13 +291,13 @@ it( 'should work with for', () => {
     expect( html ).toBe(
         '<ul>' +
             // eslint-disable-next-line max-len
-            '<li><a href="http://foo.example.com">Text for http://foo.example.com<!--default--></a></li>' +
+            '<li><a href="http://foo.example.com">Text for http://foo.example.com<!--0--></a></li>' +
             // eslint-disable-next-line max-len
-            '<li><a href="http://bar.example.com">Text for http://bar.example.com<!--default--></a></li>' +
+            '<li><a href="http://bar.example.com">Text for http://bar.example.com<!--0--></a></li>' +
             // eslint-disable-next-line max-len
-            '<li><a href="http://baz.example.com">Text for http://baz.example.com<!--default--></a></li>' +
+            '<li><a href="http://baz.example.com">Text for http://baz.example.com<!--0--></a></li>' +
         '</ul>' +
-        '<a href="http://example.com">Home<!--default--></a><!--LinkTo-->'
+        '<a href="http://example.com">Home<!--0--></a><!--0-->'
     );
 
     component.update( {
@@ -307,18 +310,18 @@ it( 'should work with for', () => {
     expect( component.container.innerHTML ).toBe(
         '<ul>' +
             // eslint-disable-next-line max-len
-            '<li><a href="http://baz.example.com">Text for http://baz.example.com<!--default--></a></li>' +
+            '<li><a href="http://baz.example.com">Text for http://baz.example.com<!--0--></a></li>' +
             // eslint-disable-next-line max-len
-            '<li><a href="http://bar.example.com">Text for http://bar.example.com<!--default--></a></li>' +
+            '<li><a href="http://bar.example.com">Text for http://bar.example.com<!--0--></a></li>' +
             // eslint-disable-next-line max-len
-            '<li><a href="http://foo.example.com">Text for http://foo.example.com<!--default--></a></li>' +
+            '<li><a href="http://foo.example.com">Text for http://foo.example.com<!--0--></a></li>' +
         '</ul>' +
-        '<a href="http://example.com">Home<!--default--></a><!--LinkTo-->'
+        '<a href="http://example.com">Home<!--0--></a><!--0-->'
     );
 } );
 
 it( 'should work useblock if was update from block component', () => {
-    const { component } = renderComponent(
+    const { component, DI } = renderComponent(
         compile`
             <DisplayContent>
                 Content
@@ -345,11 +348,11 @@ it( 'should correct resolve owner', () => {
     const { component } = renderComponent(
         compileAsSFC`
             <template>
-                <LinkTo>
-                    <LinkTo>
+                <TextContent>
+                    <TextContent>
                         {{this._text()}}
-                    </LinkTo>
-                </LinkTo>
+                    </TextContent>
+                </TextContent>
             </template>
             
             <script>

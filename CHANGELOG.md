@@ -1,6 +1,11 @@
-## master
+## 5.0.0-alpha.0
 * Remove patching `window` 
 * Use create comments/text node/elements from `Dom` service
+* Declare text node for support SSR (remove inlining)
+* Use `dom.build` hook for construct dom (for rehydration support)
+* Add variable definition syntax [#137](https://github.com/sham-ui/sham-ui-templates/issues/137)
+* Minimize generated comment size
+* Extract `{% unsafe %}` runtime to external package 
 
 ## 4.2.3
 * Rebuild

@@ -114,6 +114,9 @@ const visitors = {
     UnsafeStatement: ( node, visitor ) => {
         handle( node, visitor );
     },
+    LetStatement: ( node, visitor ) => {
+        handle( node, visitor );
+    },
     FilterExpression: ( node, visitor ) => {
         handle( node, visitor );
 

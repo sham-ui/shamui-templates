@@ -1,4 +1,3 @@
-import { DI } from 'sham-ui';
 import { compile, renderComponent } from './helpers';
 
 it( 'should insert constants as HTML', async() => {
@@ -68,13 +67,13 @@ it( 'should insert unsafe with placeholders', async() => {
             html: '<hr>'
         }
     );
-    expect( html ).toBe( '<div><br><!--unsafe--><hr><!--unsafe--></div>' );
+    expect( html ).toBe( '<div><br><!--0--><hr><!--1--></div>' );
 
     component.update( { html: '<br><!-- comment --><link href="http://ShamUIView.js.org">' } );
     expect( component.container.innerHTML ).toBe(
 
         // eslint-disable-next-line max-len
-        '<div><br><!--unsafe--><br><!-- comment --><link href="http://ShamUIView.js.org"><!--unsafe--></div>'
+        '<div><br><!--0--><br><!-- comment --><link href="http://ShamUIView.js.org"><!--1--></div>'
     );
 } );
 
@@ -109,64 +108,26 @@ it( 'should work with first level non-elements', async() => {
     const { html } = await renderComponent(
         compile`
             text
-            {% if cond %}
+            {% if condition %}
                 <div class="if">ok</div>
             {% endif %}
-            {% for loop %}
+            {% for items %}
                 <div class="for">ok</div>
             {% endfor %}
-            <first-level-tag on="{{ tag }}">
+            <div on="{{ tag }}">
                 <div class="custom">ok</div>
-            </first-level-tag>
+            </div>
             {% unsafe "<i class='unsafe'>" + xss + "</i>" %}
         `,
         {
-            cond: true,
-            loop: [ 1, 2, 3 ],
+            condition: true,
+            items: [ 1, 2, 3 ],
             tag: true,
             xss: 'ok'
         }
     );
     expect( html ).toBe(
         //eslint-disable-next-line max-len
-        'text <div class="if">ok</div><!--if--><div class="for">ok</div><div class="for">ok</div><div class="for">ok</div><!--for--><div class="custom">ok</div><!--first-level-tag--><i class="unsafe">ok</i><!--unsafe-->'
-    );
-} );
-
-//eslint-disable-next-line max-len
-it( 'should throw exception if user try to use querySelector on first level non-elements', async() => {
-    expect.assertions( 3 );
-    const loggerMock = {
-        error: jest.fn()
-    };
-    DI.bind( 'logger', loggerMock );
-
-    const { component } = await renderComponent(
-        compile`
-            text
-            {% if cond %}
-                <div class="if">ok</div>
-            {% endif %}
-            {% for loop %}
-                <div class="for">ok</div>
-            {% endfor %}
-            <first-level-tag on="{{ tag }}">
-                <div class="custom">ok</div>
-            </first-level-tag>
-            {% unsafe "<i class='unsafe'>" + xss + "</i>" %}
-        `,
-        {
-            cond: true,
-            loop: [ 1, 2, 3 ],
-            tag: true,
-            xss: 'ok'
-        }
-    );
-    component.querySelector( '.if' );
-
-    expect( loggerMock.error.mock.calls ).toHaveLength( 4 );
-    expect( loggerMock.error.mock.calls[ 0 ] ).toHaveLength( 2 );
-    expect( loggerMock.error.mock.calls[ 0 ][ 0 ].message ).toBe(
-        'sham-ui: Can not use querySelector with non-element nodes on first level.'
+        'text <div class="if">ok</div><!--0--><div class="for">ok</div><div class="for">ok</div><div class="for">ok</div><!--1--><div on="true"><div class="custom">ok</div></div><i class="unsafe">ok</i><!--2-->'
     );
 } );

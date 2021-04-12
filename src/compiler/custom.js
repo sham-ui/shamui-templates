@@ -14,9 +14,10 @@ export default {
         if ( isSingleChild( parent, node ) ) {
             placeholder = parent.reference;
         } else {
-            node.reference = placeholder = 'custom' + figure.uniqid( 'placeholder' );
+            placeholder = 'custom' + figure.uniqid( 'placeholder' );
+            node.reference = placeholder;
             figure.domRef = true;
-            figure.declare( sourceNode( `const ${placeholder} = dom.comment( '${node.name}' );` ) );
+            figure.declare( sourceNode( `const ${placeholder} = dom.comment( '${figure.uniqid( 'comment' )}' );` ) );
         }
 
         figure.thisRef = true;

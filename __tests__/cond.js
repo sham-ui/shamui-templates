@@ -63,10 +63,10 @@ it( 'should work with expression', async() => {
             indep: 'independent'
         }
     );
-    expect( html ).toBe( '<div> (one) <!--if-->3<p>independent</p><!--if--></div>' );
+    expect( html ).toBe( '<div> (one) <!--0-->3<p>independent</p><!--1--></div>' );
     component.update( { look: 2 } );
     expect( component.container.innerHTML ).toBe(
-        '<div> (one) <!--if-->2<p>independent</p><!--if--></div>'
+        '<div> (one) <!--0-->2<p>independent</p><!--1--></div>'
     );
 } );
 

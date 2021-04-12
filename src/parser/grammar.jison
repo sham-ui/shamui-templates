@@ -124,6 +124,7 @@ AttributeText [^\"{]+
 <expr>"defblock"                   return "DEFBLOCK"
 <expr>"block"                      return "BLOCK"
 <expr>"endblock"                   return "ENDBLOCK"
+<expr>"let"                        return "LET"
 <expr>{Identifier}                 return "IDENTIFIER";
 <expr>{DecimalLiteral}             return "NUMERIC_LITERAL";
 <expr>{HexIntegerLiteral}          return "NUMERIC_LITERAL";
@@ -315,6 +316,7 @@ Statement
     | DefBlockStatement
     | UseBlockStatement
     | UnsafeStatement
+    | LetStatement
     ;
 
 
@@ -383,6 +385,13 @@ UnsafeStatement
     :  "{%" UNSAFE Expression "%}"
         {
             $$ = new UnsafeStatementNode($3, createSourceLocation(@1, @4));
+        }
+    ;
+
+LetStatement
+    :  "{%" LET IdentifierName "=" Expression "%}"
+        {
+            $$ = new LetStatementNode($3, $5, createSourceLocation(@1, @6));
         }
     ;
 

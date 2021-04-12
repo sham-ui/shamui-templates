@@ -139,7 +139,7 @@ it( 'should delete old items from childred map with custom tag', async() => {
         }
     );
     expect( html ).toBe(
-        '<div><ul><li>1:a</li><!--MyLi--><li>2:b</li><!--MyLi--><li>3:c</li><!--MyLi--></ul></div>'
+        '<div><ul><li>1:a</li><!--0--><li>2:b</li><!--0--><li>3:c</li><!--0--></ul></div>'
     );
 
     component.update( {
@@ -155,7 +155,7 @@ it( 'should delete old items from childred map with custom tag', async() => {
         ]
     } );
     expect( component.container.innerHTML ).toBe(
-        '<div><ul><li>1:a</li><!--MyLi--><li>3:c</li><!--MyLi--></ul></div>'
+        '<div><ul><li>1:a</li><!--0--><li>3:c</li><!--0--></ul></div>'
     );
 } );
 

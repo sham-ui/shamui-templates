@@ -63,6 +63,13 @@ export class Figure {
             '\n'
         ] );
 
+        if ( null === this.parent ) {
+            sn.add( [
+                '        this.isRoot = true;\n',
+                '\n'
+            ] );
+        }
+
         if ( this.thisRef ) {
             sn.add( [
                 '        const _this = this;\n',
@@ -87,14 +94,17 @@ export class Figure {
 
         if ( this.constructions.length > 0 ) {
             sn.add( [
-                '        // Construct dom\n',
-                '        ', sourceNode( null, this.constructions ).join( '\n        ' ),
-                '\n\n'
+                '\n',
+                '        if ( dom.build() ) {\n\n',
+                '            // Construct dom\n',
+                '            ', sourceNode( null, this.constructions ).join( '\n            ' ),
+                '\n    }\n\n'
             ] );
         }
 
         if ( this.directives.length > 0 ) {
             sn.add( [
+                '\n',
                 '        // Directives\n',
                 sourceNode( null, this.directives ).join( '\n        ' ),
                 '\n\n'
@@ -103,6 +113,7 @@ export class Figure {
 
         if ( size( this.blocks ) > 0 ) {
             sn.add( [
+                '\n',
                 '        // Blocks\n',
                 this.generateBlocks(),
                 '\n\n'
@@ -111,16 +122,18 @@ export class Figure {
 
         if ( size( this.spots ) > 0 ) {
             sn.add( [
+                '\n',
                 '        // Update spot functions\n',
-                '        this.spots = {\n',
+                '        this.spots = [\n',
                 '        ', this.generateSpots(), '\n',
-                '        };\n',
+                '        ];\n',
                 '\n'
             ] );
         }
 
         if ( this.renderActions.length > 0 ) {
             sn.add( [
+                '\n',
                 '        // Extra render actions\n',
                 '        this.onRender = () => {\n',
                 sourceNode( this.renderActions ).join( '\n' ), '\n',
@@ -131,6 +144,7 @@ export class Figure {
 
         if ( this.onUpdate.length > 0 ) {
             sn.add( [
+                '\n',
                 '        // On update actions\n',
                 '        this.onUpdate = ( __data__ ) => {\n',
                 sourceNode( this.onUpdate ).join( '\n' ), '\n',
@@ -141,6 +155,7 @@ export class Figure {
 
         if ( this.onRemove.length > 0 ) {
             sn.add( [
+                '\n',
                 '        // On remove actions\n',
                 '        this.onRemove = ( __data__ ) => {\n',
                 sourceNode( this.onRemove ).join( '\n' ), '\n',
@@ -150,6 +165,7 @@ export class Figure {
         }
 
         sn.add( [
+            '\n',
             '        // Set root nodes\n',
             '        this.nodes = [ ', sourceNode( this.children ).join( ', ' ), ' ];\n'
         ] );
@@ -181,40 +197,70 @@ export class Figure {
         const parts = [];
 
         let spots = Object.keys( this.spots ).map( key => this.spots[ key ] )
-            .sort( ( a, b ) => a.length - b.length );
+            .sort( ( a, b ) => a.weight - b.weight );
         for ( let spot of spots ) {
             let generatedSpot;
+
             if ( spot.onlyFromLoop || spot.cache || spot.length > 1 ) {
                 if ( spot.onlyFromLoop && !spot.cache && 0 === spot.operators.length ) {
                     continue;
                 }
-                generatedSpot = sourceNode( ': {\n' );
-                const items = [];
-                if ( spot.onlyFromLoop ) {
-                    items.push( sourceNode( '                loop: true' ) );
-                }
+                let optionMask = 0;
+                let options = [];
                 if ( spot.cache ) {
-                    items.push( sourceNode( '                cache: true' ) );
+                    optionMask = optionMask | 1; // SPOT_CACHE = 2
+                    options.push( 'CACHE' );
                 }
-                if ( spot.length > 1 ) {
-                    items.push( sourceNode( '                multiple: true' ) );
+                if ( spot.onlyFromLoop ) {
+                    optionMask = optionMask | 2; // SPOT_LOOP = 1
+                    options.push( 'LOOP' );
                 }
-                if ( spot.operators.length > 0 ) {
-                    items.push(
-                        sourceNode( [
-                            '                op', spot.generateOperation()
-                        ] )
+
+                generatedSpot = sourceNode( [
+                    '    [\n'
+                ] );
+
+                if ( optionMask > 0 ) {
+                    generatedSpot.add(
+                        `                ${optionMask},${` // ${options.join( ', ' )}`}\n`
                     );
                 }
-                generatedSpot.add( items.join( ',\n' ) ).add( '\n' );
-                generatedSpot.add( '            }' );
+
+                if ( spot.length > 1 ) {
+                    const variables = spot.variables.map( x => `'${x}'` ).join( ', ' );
+                    generatedSpot.add( [
+                        '                [ ', variables, ' ]'
+                    ] );
+                } else {
+                    generatedSpot.add(
+                        `                '${spot.variables[ 0 ]}'`
+                    );
+                }
+
+                if ( spot.operators.length > 0 ) {
+                    generatedSpot.add( [
+                        ',\n',
+                        `                ${spot.generateOperation()}`
+                    ] );
+                }
+                generatedSpot.add( '\n            ]' );
             } else if ( 0 === spot.operators.length ) {
                 continue;
             } else {
-                generatedSpot = spot.generateOperation();
+                const variable = 0 === spot.length ?
+                    '[]' :
+                    `'${spot.variables[ 0 ]}'`
+                ;
+                generatedSpot = sourceNode( [
+                    '    [\n',
+                    `                ${variable},\n`,
+                    `                ${spot.generateOperation()}`,
+                    '\n            ]'
+                ] );
             }
+
             parts.push(
-                sourceNode( [ '    ', spot.reference, generatedSpot ] )
+                generatedSpot
             );
         }
         return sourceNode( null, parts ).join( ',\n        ' );
@@ -249,12 +295,6 @@ export class Figure {
         return this.uniqCounters[ name ]++;
     }
 
-    hasSpot( variables ) {
-        return this.spots.hasOwnProperty(
-            new Spot( [].concat( variables ) ).reference
-        );
-    }
-
     spot( variables ) {
         let s = new Spot( [].concat( variables ) );
 
@@ -262,9 +302,13 @@ export class Figure {
             this.spots[ s.reference ] = s;
 
             if ( s.variables.length > 1 ) {
+                let weight = 0;
                 for ( let variable of s.variables ) {
-                    this.spot( variable ).cache = true;
+                    const spot = this.spot( variable );
+                    spot.cache = true;
+                    weight += spot.weight;
                 }
+                s.weight = weight;
             }
         }
 
