@@ -11,9 +11,7 @@ it( 'should single file component work', async() => {
         </template>
         
         <script>
-            class dummy extends Template {
-                
-            }
+            export default Component( Template );
         </script>
         `,
         {
@@ -36,12 +34,16 @@ it( 'should single file component correct work with options', async() => {
         </template>
         
         <script>
-            import { options } from 'sham-ui';
-            class dummy extends Template {
-                @options get text() {
-                    return 'Text for content'
-                }
-            }
+            export default Component( Template, function( options ) {
+                const text = ref(); 
+                options( {
+                    [ text ]: {
+                        get() {
+                            return 'Text for content'
+                        }
+                    }
+                } );
+            } );
         </script>
         `,
         {
@@ -66,10 +68,12 @@ it( 'should single file component correct work with imports', async() => {
         </template>
         
         <script>
-            import { options } from 'sham-ui';
-            class dummy extends Template {
-                @options text = 'default text';
-            }
+            export default Component( Template, function( options ) {
+                const text = ref();
+                options( { 
+                    [ text ]: 'default text' 
+                } );
+            } );
         </script>
         `,
         {
@@ -100,11 +104,11 @@ it( 'should single file component correct work with context in blocks', async() 
         </template>
         
         <script>
-            class dummy extends Template {
-                title() {
+            export default Component( Template, function() {
+                this.title = () => {
                     return 'Title text'
                 };
-            }
+            } );
         </script>
         `
     );
@@ -115,7 +119,7 @@ it( 'should single file component correct work with context in blocks', async() 
     delete window.CustomPanel;
 } );
 
-it( 'should work with class getters in expressions', () => {
+it( 'should work with class property in expressions', () => {
     const { html } = renderComponent(
         compileAsSFC`
         <template>
@@ -123,18 +127,16 @@ it( 'should work with class getters in expressions', () => {
         </template>
         
         <script>
-            class dummy extends Template {
-                get user() {
-                    return 'John Smith';
-                };
-            }
+            export default Component( Template, function() {
+                this.user = 'John Smith'; 
+            } );
         </script>
         `
     );
     expect( html ).toBe( '<span>John Smith</span>' );
 } );
 
-it( 'should work with class getters in if', () => {
+it( 'should work with class property in if', () => {
     const { html } = renderComponent(
         compileAsSFC`
         <template>
@@ -144,11 +146,9 @@ it( 'should work with class getters in if', () => {
         </template>
         
         <script>
-            class dummy extends Template {
-                get isVisible() {
-                    return true;
-                };
-            }
+            export default Component( Template, function() {
+                this.isVisible = true;
+            } );
         </script>
         `,
         {
@@ -158,30 +158,3 @@ it( 'should work with class getters in if', () => {
     expect( html ).toBe( '<span>Joh Smith</span><!--0-->' );
 } );
 
-it( 'should work with class getters in for', () => {
-    const { html } = renderComponent(
-        compileAsSFC`
-        <template>
-            <ul>
-                {% for user of this.userList %}
-                    <li>{{user}}</li>
-                {% endfor %}
-            </ul>
-        </template>
-        
-        <script>
-            class dummy extends Template {
-                get userList() {
-                    return [ 
-                        'John Smith',
-                        'Adam Mock'
-                     ]
-                };
-            }
-        </script>
-        `
-    );
-    expect( html ).toBe(
-        '<ul><li>John Smith</li><li>Adam Mock</li></ul>'
-    );
-} );

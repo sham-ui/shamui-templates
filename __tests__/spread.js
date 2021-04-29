@@ -1,4 +1,4 @@
-import { compile, compileAsSFC, renderComponent } from './helpers';
+import { compile, renderComponent } from './helpers';
 
 beforeEach( () => {
     window.SpreadCustom = compile`
@@ -200,75 +200,4 @@ it( 'should work for custom tags proxy __data__', async() => {
         boo: 'Boo-Ya'
     } );
     expect( component.container.innerHTML ).toBe( '<div><i>foo</i><i>Boo-Ya</i><i>bar</i></div>' );
-} );
-
-it( 'should work extend template with spread', async() => {
-    expect.assertions( 2 );
-    window.SpreadCustom = compileAsSFC`
-        <template>
-            {% defblock 'before' %}
-            <i>{{ foo }}</i>
-            <i>{{ boo }}</i>
-            {% defblock 'inner' %}
-            <i>{{ bar }}</i>
-            <i>{{ this.method() }}</i>
-            {% defblock 'after' %}
-        </template>
-        <script>
-            class dummy extends Template {
-                method() {
-                    return 'Original content of template';
-                }
-            }
-        </script>
-    `;
-
-    const { html, component } = await renderComponent(
-        compileAsSFC`
-        <template>
-            <SpreadCustom {{...this.__data__}}>
-               {% block 'before' %}
-                  <i>Before {{baz}}</i>
-               {% endblock %}
-               {% block 'inner' %}
-                  <i>Inner {{baz}}</i>
-               {% endblock %}
-               {% block 'after' %}
-                  <i>After {{baz}}</i>
-               {% endblock %}
-            </SpreadCustom>        
-        </template>
-        <script>
-        
-            // Make extending SpreadCustom
-            const SpreadCustom = class extends window.SpreadCustom {
-                method() {
-                    return super.method() + ' & extending content';
-                }
-            };
-            
-            // export default Template
-            const dummy = Template;
-        </script>
-        `,
-        {
-            foo: 'foo',
-            boo: 'boo',
-            bar: 'bar',
-            baz: 'baz'
-        }
-    );
-    expect( html ).toBe(
-        // eslint-disable-next-line max-len
-        ' <i>Before baz</i> <!--0--><i>foo</i><i>boo</i> <i>Inner baz</i> <!--1--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After baz</i> <!--2--><!--0-->'
-    );
-
-    component.update( {
-        boo: 'Boo-Ya',
-        baz: 'Baz-Ya'
-    } );
-    expect( component.container.innerHTML ).toBe(
-        // eslint-disable-next-line max-len
-        ' <i>Before Baz-Ya</i> <!--0--><i>foo</i><i>Boo-Ya</i> <i>Inner Baz-Ya</i> <!--1--><i>bar</i><i>Original content of template &amp; extending content</i> <i>After Baz-Ya</i> <!--2--><!--0-->'
-    );
 } );

@@ -27,17 +27,17 @@ it( 'function bind correctly work with directives', () => {
     const handler = jest.fn();
     const { html, component } = renderComponent(
         compileAsSFC`
-        <template>
-            <button :onclick={{::this.click}}>click me</button>
-        </template>
-        
-        <script>
-            class dummy extends Template {
-                click( e ) {
-                    this.options.handler( this, e.type );
-                };
-            }
-        </script>
+            <template>
+                <button :onclick={{::this.click}}>click me</button>
+            </template>
+            
+            <script>
+                export default Component( Template, function() {
+                    this.click = ( e ) => {
+                        this.options.handler( this, e.type );
+                    }
+                } );
+            </script>
         `,
         {
             directives: {

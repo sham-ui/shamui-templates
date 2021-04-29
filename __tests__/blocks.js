@@ -356,16 +356,12 @@ it( 'should correct resolve owner', () => {
             </template>
             
             <script>
-                import { options } from 'sham-ui';
-                class dummy extends Template {
-                    @options text() {
-                        return 'Text for content'
-                    }
-                    
-                    _text() {
-                        return this.options.text();
-                    }
-                }
+                export default Component( Template, function( options ) {
+                    options( {
+                        text: () => 'Text for content'
+                    } );
+                    this._text = () => this.options.text();
+                } )
             </script>
         `
     );

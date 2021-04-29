@@ -1,4 +1,3 @@
-import { options } from 'sham-ui';
 import { compile, renderComponent } from './helpers';
 
 it( 'should render simple DOM', async() => {
@@ -256,23 +255,6 @@ it( 'should replace HTML entities with Unicode symbols', async() => {
         compile`&quot;&amp;&apos;&lt;&gt;&copy;&pound;&plusmn;&para;&ensp;&mdash;&emsp;&euro;&thinsp;&hearts;&notExists;`
     );
     expect( html ).toBe( '"&amp;\'&lt;&gt;©£±¶ — € ♥&amp;notExists;' );
-} );
-
-it( 'should override options', () => {
-    class ExtendedDummy extends compile`<span>{{text}}</span>` {
-        @options get text() {
-            return 'Foo';
-        }
-    }
-    const { html, component } = renderComponent( ExtendedDummy );
-    expect( component.options.text ).toBe( 'Foo' );
-
-    expect( html ).toBe( '<span>Foo</span>' );
-    component.update( {
-        text: 'Bar'
-    } );
-    expect( component.container.innerHTML ).toBe( '<span>Bar</span>' );
-    expect( component.options.text ).toBe( 'Bar' );
 } );
 
 it( 'should ignore script tag content', () => {

@@ -8,14 +8,14 @@ export default {
         if ( options.asModule ) {
             return sourceNode( node.loc, [
                 figure.generate(), '\n',
-                `export default ${figure.name};\n`
+                `export default Component( ${figure.name} );\n`
             ] );
         } else if ( options.asSingleFileComponent ) {
             return sourceNode( node.loc, [ figure.generate() ] );
         } else {
             return sourceNode( node.loc, [
                 figure.generate(), '\n',
-                `window.${figure.name} = ${figure.name};\n`
+                `window.${figure.name} = Component( ${figure.name} );\n`
             ] );
         }
     }

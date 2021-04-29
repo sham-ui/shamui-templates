@@ -1,3 +1,7 @@
+## 5.0.0-alpha.1
+* Generate function for `Component` factory
+* Changes for usage `ref` from `sham-ui-macro` 
+
 ## 5.0.0-alpha.0
 * Remove patching `window` 
 * Use create comments/text node/elements from `Dom` service

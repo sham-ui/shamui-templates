@@ -14,9 +14,7 @@ it( 'should single file component work', async() => {
         </template>
         
         <script>
-            class dummy extends Template {
-                
-            }
+            export default Component( Template );
         </script>
         `,
         {
@@ -43,11 +41,11 @@ it( 'should single file component and methods work', async() => {
         </template>
         
         <script>
-            class dummy extends Template {
-                sum( a, b ) {
+            export default Component( Template, function() {
+                this.sum = function( a, b ) {
                     return a + b;
                 }
-            }
+            } );
         </script>
         `,
         {
@@ -74,11 +72,11 @@ it( 'should work in for loop', async() => {
         </template>
         
         <script>
-            class dummy extends Template {
-                sum( arr ) {
+            export default Component( Template, function() {
+                this.sum = function( arr ) {
                     return arr.reduce( ( acc, x ) => acc + x, 0 );
                 }
-            }
+            } )
         </script>
         `,
         {

@@ -20,7 +20,6 @@ export default {
             figure.declare( sourceNode( `const ${placeholder} = dom.comment( '${figure.uniqid( 'comment' )}' );` ) );
         }
 
-        figure.thisRef = true;
         figure.declare( sourceNode( `const ${childName} = {};` ) );
 
         const blockRef = `${childName}_blocks`;
@@ -35,7 +34,7 @@ export default {
                 let [ expr ] = compileToExpression( figure, attr, compile );
                 const variables = collectVariables( figure.getScope(), expr );
                 let spreadSN = sourceNode( node.loc,
-                    `            insert( _this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()} )`
+                    `            insert( this, ${placeholder}, ${childName}, ${templateName}, ${compile( expr )}, ${figure.getPathToDocument()} )`
                 );
                 if ( variables.length > 0 ) {
                     figure.spot( variables ).add( spreadSN );
@@ -47,28 +46,28 @@ export default {
                 let [ expr ] = compileToExpression( figure, attr, compile ); // TODO: Add support for default value in custom tag attributes attr={{ value || 'default' }}.
                 variables = variables.concat( collectVariables( figure.getScope(), expr ) );
 
-                let property = sourceNode( node.loc, [ `'${attr.name}': ${compile( expr )}` ] );
+                let property = sourceNode( node.loc, [ `[ ref( '${attr.name}' ) ]: ${compile( expr )}` ] );
                 data.push( property );
 
             }
         }
 
         variables = unique( variables );
-        data = `{${data.join( ', ' )}}`;
+        data = `{ ${data.join( ', ' )} }`;
 
 
         figure.addRuntimeImport( 'insert' );
-        const mountCode = `insert( _this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()}, ${blockRef} )`;
+        const mountCode = `insert( this, ${placeholder}, ${childName}, ${templateName}, ${data}, ${figure.getPathToDocument()}, ${blockRef} )`;
 
         // Add spot for custom attribute or insert on render if no variables in attributes.
         if ( variables.length > 0 ) {
             const spot = figure.spot( variables );
             spot.add(
-                sourceNode( node.loc, `                ${mountCode}` )
+                sourceNode( node.loc, `            ${mountCode}` )
             );
         } else {
             figure.addRenderActions(
-                sourceNode( node.loc, `            ${mountCode}` )
+                sourceNode( node.loc, `        ${mountCode}` )
             );
         }
 

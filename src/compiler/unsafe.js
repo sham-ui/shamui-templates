@@ -26,13 +26,13 @@ export default {
         if ( variables.length === 0 ) {
             figure.addRenderActions(
                 sourceNode( node.loc, [
-                    `      dom.unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), ');'
+                    `  dom.unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), ');'
                 ] )
             );
         } else {
             figure.spot( variables ).add(
                 sourceNode( node.loc, [
-                    `      dom.unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), ')'
+                    `  dom.unsafe(${placeholder}, ${unsafeNodes}, `, compile( node.html ), ')'
                 ] )
             );
         }

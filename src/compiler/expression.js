@@ -1,5 +1,6 @@
 import { sourceNode } from './sourceNode';
 import { collectVariables } from './variable';
+import { visit } from '../visitor';
 
 function isStatic( node ) {
     return node.type === 'ThisExpression' || node.type === 'Identifier';
@@ -16,7 +17,6 @@ function buildBindContextAndCallee( bind, figure, compile ) {
     let context;
     if ( staticContext ) {
         if ( staticContext.type === 'ThisExpression' ) {
-            figure.thisRef = true;
             context = figure.getPathToDocument();
             if ( bind.object ) {
                 callee = compile( bind.callee );
@@ -37,6 +37,21 @@ function buildBindContextAndCallee( bind, figure, compile ) {
         callee = `(${context.name} = ${compile( bind.callee.object )}).${compile( bind.callee.property )}`;
     }
     return { context, callee };
+}
+
+function hasThisExpression( node ) {
+    let has = false;
+    if ( node ) {
+        const nodes = [].concat( node );
+        nodes.forEach( ( node ) => {
+            visit( node, {
+                ThisExpression() {
+                    has = true;
+                }
+            } );
+        } );
+    }
+    return has;
 }
 
 export default {
@@ -60,7 +75,7 @@ export default {
 
         let variables = collectVariables( figure.getScope(), node.expression );
 
-        if ( variables.length === 0 ) {
+        if ( variables.length === 0 && !hasThisExpression( node.expression ) ) {
             figure.construct(
                 sourceNode( node.loc,
                     [ node.reference, '.textContent = ', compile( node.expression ) ] )
@@ -83,8 +98,7 @@ export default {
         let prefix = '';
 
         if ( !figure.isInScope( node.callee.name ) ) {
-            figure.thisRef = true;
-            prefix = '_this.filters.';
+            prefix = 'this.filters.';
         }
 
         let sn = sourceNode( node.loc, [ prefix, compile( node.callee ), '( ' ] );
@@ -279,7 +293,6 @@ export default {
     },
 
     ThisExpression: ( { node, figure } ) => {
-        figure.thisRef = true;
         return sourceNode( node.loc, figure.getPathToDocument() );
     },
 

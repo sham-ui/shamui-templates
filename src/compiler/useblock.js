@@ -23,9 +23,9 @@ export default {
 
             figure.addOnUpdate(
                 sourceNode( loc, [
-                    `            if ( ${childName}.ref ) {\n`,
-                    `                ${childName}.ref.update( __data__ );\n`,
-                    '            }'
+                    `        if ( ${childName}.ref ) {\n`,
+                    `            ${childName}.ref.update( __data__ );\n`,
+                    '        }'
                 ] )
             );
         };
@@ -35,9 +35,8 @@ export default {
         figure.addRuntimeImport( 'insert' );
         parent.addBlock(
             sourceNode( node.loc, [
-                `            '${blockName}'( node, block ) {\n`,
-                `                insert( block, node, ${childName}, ${templateName}, _this.dataForBlock(), ${figure.getPathToDocument()}, _this.blocks );\n`,
-                '            }'
+                `        [ ref( '${blockName}' ) ]: ( node, block ) => `,
+                `insert( block, node, ${childName}, ${templateName}, this.dataForBlock(), ${figure.getPathToDocument()}, this.blocks )`
             ] )
         );
 

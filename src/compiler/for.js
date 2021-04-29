@@ -25,14 +25,12 @@ export default {
 
         // for (
 
-        figure.thisRef = true;
-
         let variablesOfExpression = collectVariables( figure.getScope(), node.expr );
 
         if ( variablesOfExpression.length > 0 ) {
             figure.spot( variablesOfExpression ).add(
                 sourceNode( node.loc, [
-                    `                loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                    `                loop( this, ${placeholder}, ${childrenName}, ${templateName}, `,
                     compile( node.expr ),
                     ', ',
                     (
@@ -45,7 +43,7 @@ export default {
         }  else {
             figure.addOnUpdate(
                 sourceNode( node.loc, [
-                    `            loop( _this, ${placeholder}, ${childrenName}, ${templateName}, `,
+                    `            loop( this, ${placeholder}, ${childrenName}, ${templateName}, `,
                     compile( node.expr ),
                     ', ',
                     (

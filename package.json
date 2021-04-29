@@ -1,6 +1,6 @@
 {
   "name": "sham-ui-templates",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-alpha.1",
   "description": "Template support for [sham-ui](https://github.com/sham-ui/sham-ui), based on [Monkberry](https://github.com/antonmedv/monkberry)",
   "bin": "bin/sham-ui-templates",
   "main": "lib/index.js",
@@ -28,7 +28,8 @@
         {
           "loose": true
         }
-      ]
+      ],
+      "macros"
     ]
   },
   "jest": {
@@ -76,7 +77,8 @@
   "license": "MIT",
   "dependencies": {
     "asciitree": "^1.0.2",
-    "sham-ui": "5.0.0-alpha.2",
+    "sham-ui": "5.0.0-alpha.3",
+    "sham-ui-macro": "^3.0.0",
     "source-map": "^0.5.7"
   },
   "devDependencies": {
@@ -91,6 +93,7 @@
     "babel-eslint": "^10.0.2",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.6",
+    "babel-plugin-macros": "^2.6.1",
     "core-js": "^3.2.1",
     "eslint": "^5.16.0",
     "eslint-plugin-jest": "^21.26.0",
@@ -98,8 +101,8 @@
     "jest-runner-eslint": "^0.7.1",
     "jison": "^0.4.17",
     "preprocessor": "^1.4.0",
-    "upper-case": "^1.1.3",
-    "sham-ui-unsafe": "^0.0.1"
+    "sham-ui-unsafe": "^0.0.1",
+    "upper-case": "^1.1.3"
   },
   "repository": {
     "type": "git",
@@ -117,5 +120,10 @@
     "> 1%",
     "not dead",
     "not ie <= 11"
-  ]
+  ],
+  "babelMacros": {
+    "ref": {
+      "enabled": true
+    }
+  }
 }

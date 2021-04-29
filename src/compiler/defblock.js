@@ -13,9 +13,9 @@ export default {
 
         figure.addRenderActions(
             sourceNode( [
-                `            if ( this.blocks[ '${name}' ] ) {\n`,
-                `                this.blocks[ '${name}' ]( ${placeholder}, this );\n`,
-                '            }'
+                `        if ( this.blocks[ ref( '${name}' ) ] ) {\n`,
+                `            this.blocks[ ref( '${name}' ) ]( ${placeholder}, this );\n`,
+                '        }'
             ] )
         );
         return node.reference;

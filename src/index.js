@@ -20,7 +20,8 @@ export class Compiler {
             'Array',
             'Object',
             'Math',
-            'JSON'
+            'JSON',
+            'ref'
         ];
     }
 

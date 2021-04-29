@@ -17,18 +17,18 @@ export default {
         const directive = hyphensToCamelCase( node.name ) + 'Directive' +
             figure.uniqid( 'directive_name' );
 
-        figure.addDirective( sourceNode( node.loc, `        let ${directive};` ) );
+        figure.addDirective( sourceNode( node.loc, `    let ${directive};` ) );
         figure.addRenderActions(
             sourceNode( node.loc, [
-                `            if ( ${directive} === undefined ) {\n`,
-                `                ${directive} = new this.directives.${node.name}( ${figure.getPathToDocument()} );\n`,
-                '            }\n',
-                `            ${directive}.bind( ${parent.reference} );`
+                `        if ( ${directive} === undefined ) {\n`,
+                `            ${directive} = new this.directives.${node.name}( ${figure.getPathToDocument()} );\n`,
+                '        }\n',
+                `        ${directive}.bind( ${parent.reference} );`
             ] )
         );
         figure.addOnRemove(
             sourceNode( node.loc, [
-                `            ${directive}.unbind(${parent.reference});`
+                `        ${directive}.unbind(${parent.reference});`
             ] )
         );
 
@@ -39,7 +39,7 @@ export default {
         if ( variables.length === 0 ) {
             figure.addRenderActions(
                 sourceNode( node.loc, [
-                    `            ${directive}.update( `, (
+                    `        ${directive}.update( `, (
                         expr ? compile( expr ) : 'undefined'
                     ), ' );'
                 ] )
@@ -47,7 +47,7 @@ export default {
         } else {
             figure.spot( variables ).add(
                 sourceNode( node.loc, [
-                    `      ${directive}.update( `, compile( expr ), ' )'
+                    `  ${directive}.update( `, compile( expr ), ' )'
                 ] )
             );
         }

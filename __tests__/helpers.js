@@ -1,12 +1,16 @@
-import { start, createDI, Component, Map, loop, cond, insert } from 'sham-ui';
+import { start, createDI } from 'sham-ui';
 import setupUnsafe from 'sham-ui-unsafe';
 import { Compiler } from '../src/index';
 import { sourceNode } from '../src/compiler/sourceNode';
-import { transformSync } from '@babel/core';
+import { transformSync as babelTransform } from '@babel/core';
 import rootPackage from '../package.json';
 
+function transformSync( code, config ) {
+    return babelTransform( code, config );
+}
+
 const compiler = new Compiler( {
-    asModule: false
+    asModule: true
 } );
 
 const compilerForSFC = new Compiler( {
@@ -14,18 +18,21 @@ const compilerForSFC = new Compiler( {
     asModule: false
 } );
 
+// It's hack for don't replace require with webpack require
+const requireModule = eval( 'require' );
+
 function evalComponent( code ) {
-    code = code.replace( /import { .+ } from 'sham-ui';/, '' );
-    const fn = new Function( [
-        'var require=arguments[0],',
-        'Component=arguments[1],',
-        'Map=arguments[2],',
-        'insert=arguments[3],',
-        'cond=arguments[4],',
-        'loop=arguments[5];',
-        `${code}return dummy;`
-    ].join( '' ) );
-    return fn( require, Component, Map, insert, cond, loop );
+    const body = [
+        'var module=exports;',
+        code,
+        'return module.exports || exports.default;'
+    ].join( '\n' );
+    const fn = new Function(
+        'require',
+        'exports',
+        body
+    );
+    return fn( requireModule, {}, );
 }
 
 export function compile( strings ) {
@@ -36,13 +43,14 @@ export function compile( strings ) {
             strings.join( '\n' ).trim()
         )
     );
-    return evalComponent( node.toString() );
+    const { code } = transformSync( node.toString(), rootPackage.babel );
+    return evalComponent( code );
 }
 
 export function compileWithOptions( options ) {
     const compilerWithOptions = new Compiler( {
         ...options,
-        asModule: false
+        asModule: true
     } );
     return function( strings ) {
         const node = sourceNode( '' );
@@ -52,7 +60,8 @@ export function compileWithOptions( options ) {
                 strings.join( '\n' ).trim()
             )
         );
-        return evalComponent( node.toString() );
+        const { code } = transformSync( node.toString(), rootPackage.babel );
+        return evalComponent( code );
     };
 }
 

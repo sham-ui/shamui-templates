@@ -21,14 +21,12 @@ export class Figure {
         this.onUpdate = [];
         this.onRemove = [];
         this.blocks = {};
-        this.thisRef = false;
         this.domRef = false;
         this.requireDefaultNeed = true;
         this.runtimeImports = new Set();
         if ( parent === null ) {
             this.runtimeImports.add( 'Component' );
         }
-
     }
 
     generate() {
@@ -40,9 +38,13 @@ export class Figure {
             sn.add( 'function __requireDefault( obj ) { return obj && obj.__esModule ? obj.default : obj; }\n\n' );
         }
 
+        if ( null === this.parent ) {
+            sn.add( sourceNode( 'import { ref } from \'sham-ui-macro/babel.macro\';\n' ) );
+        }
+
         if ( this.runtimeImports.size > 0 ) {
             const runtimeImports = Array.from( this.runtimeImports.values() ).join( ', ' );
-            sn.add( sourceNode( `import { ${runtimeImports} } from 'sham-ui';\n\n` ) );
+            sn.add( sourceNode( `import { ${runtimeImports} } from 'sham-ui';\n` ) );
         }
 
         if ( this.imports.length > 0 ) {
@@ -55,39 +57,40 @@ export class Figure {
             sn.add( this.generateFunctions() );
         }
 
-        sn.add( [
-            '\n',
-            `class ${this.name} extends Component {\n`,
-            '    constructor( options ) {\n',
-            '        super( options );\n',
-            '\n'
-        ] );
+        sn.add( '\n' );
+
+        if ( null === this.parent ) {
+            sn.add( `function ${this.name}` );
+        } else {
+            sn.add( `const ${this.name} = Component( function` );
+        }
+
+        if ( this.onRemove.length > 0 ) {
+            sn.add( '( options, update, didMount, onRemove ) {\n' );
+        } else {
+            sn.add( '() {\n' );
+        }
+
+        sn.add( '\n' );
 
         if ( null === this.parent ) {
             sn.add( [
-                '        this.isRoot = true;\n',
-                '\n'
-            ] );
-        }
-
-        if ( this.thisRef ) {
-            sn.add( [
-                '        const _this = this;\n',
+                '    this.isRoot = true;\n',
                 '\n'
             ] );
         }
 
         if ( this.domRef ) {
             sn.add( [
-                '        const dom = this.dom;\n',
+                '    const dom = this.dom;\n',
                 '\n'
             ] );
         }
 
         if ( this.declarations.length > 0 ) {
             sn.add( [
-                '        // Create elements\n',
-                '        ', sourceNode( this.declarations ).join( '\n        ' ),
+                '    // Create elements\n',
+                '    ', sourceNode( this.declarations ).join( '\n    ' ),
                 '\n\n'
             ] );
         }
@@ -95,9 +98,9 @@ export class Figure {
         if ( this.constructions.length > 0 ) {
             sn.add( [
                 '\n',
-                '        if ( dom.build() ) {\n\n',
-                '            // Construct dom\n',
-                '            ', sourceNode( null, this.constructions ).join( '\n            ' ),
+                '    if ( dom.build() ) {\n\n',
+                '        // Construct dom\n',
+                '        ', sourceNode( null, this.constructions ).join( '\n        ' ),
                 '\n    }\n\n'
             ] );
         }
@@ -105,8 +108,8 @@ export class Figure {
         if ( this.directives.length > 0 ) {
             sn.add( [
                 '\n',
-                '        // Directives\n',
-                sourceNode( null, this.directives ).join( '\n        ' ),
+                '    // Directives\n',
+                sourceNode( null, this.directives ).join( '\n    ' ),
                 '\n\n'
             ] );
         }
@@ -114,7 +117,7 @@ export class Figure {
         if ( size( this.blocks ) > 0 ) {
             sn.add( [
                 '\n',
-                '        // Blocks\n',
+                '    // Blocks\n',
                 this.generateBlocks(),
                 '\n\n'
             ] );
@@ -123,10 +126,10 @@ export class Figure {
         if ( size( this.spots ) > 0 ) {
             sn.add( [
                 '\n',
-                '        // Update spot functions\n',
-                '        this.spots = [\n',
-                '        ', this.generateSpots(), '\n',
-                '        ];\n',
+                '    // Update spot functions\n',
+                '    this.spots = [\n',
+                '    ', this.generateSpots(), '\n',
+                '    ];\n',
                 '\n'
             ] );
         }
@@ -134,10 +137,10 @@ export class Figure {
         if ( this.renderActions.length > 0 ) {
             sn.add( [
                 '\n',
-                '        // Extra render actions\n',
-                '        this.onRender = () => {\n',
+                '    // Extra render actions\n',
+                '    this.onRender = () => {\n',
                 sourceNode( this.renderActions ).join( '\n' ), '\n',
-                '        };\n',
+                '    };\n',
                 '\n'
             ] );
         }
@@ -145,10 +148,10 @@ export class Figure {
         if ( this.onUpdate.length > 0 ) {
             sn.add( [
                 '\n',
-                '        // On update actions\n',
-                '        this.onUpdate = ( __data__ ) => {\n',
+                '    // On update actions\n',
+                '    this.onUpdate = ( __data__ ) => {\n',
                 sourceNode( this.onUpdate ).join( '\n' ), '\n',
-                '        };\n',
+                '     };\n',
                 '\n'
             ] );
         }
@@ -156,23 +159,26 @@ export class Figure {
         if ( this.onRemove.length > 0 ) {
             sn.add( [
                 '\n',
-                '        // On remove actions\n',
-                '        this.onRemove = ( __data__ ) => {\n',
+                '    // On remove actions\n',
+                '    onRemove( () => {\n',
                 sourceNode( this.onRemove ).join( '\n' ), '\n',
-                '        };\n',
+                '    } );\n',
                 '\n'
             ] );
         }
 
         sn.add( [
             '\n',
-            '        // Set root nodes\n',
-            '        this.nodes = [ ', sourceNode( this.children ).join( ', ' ), ' ];\n'
+            '    // Set root nodes\n',
+            '    this.nodes = [ ', sourceNode( this.children ).join( ', ' ), ' ];\n'
         ] );
 
-        sn.add( '    }\n' );
 
-        sn.add( '}\n' );
+        if ( null === this.parent ) {
+            sn.add( '};\n' );
+        } else {
+            sn.add( '} );\n' );
+        }
 
         for ( let subfigure of this.subFigures ) {
             sn.add( subfigure.generate() );
@@ -205,6 +211,29 @@ export class Figure {
                 if ( spot.onlyFromLoop && !spot.cache && 0 === spot.operators.length ) {
                     continue;
                 }
+
+                generatedSpot = sourceNode( [
+                    '    [\n'
+                ] );
+
+                if ( spot.length > 1 ) {
+                    const variables = spot.variables.map( x => `ref( '${x}' )` ).join( ', ' );
+                    generatedSpot.add( [
+                        '            [ ', variables, ' ]'
+                    ] );
+                } else {
+                    generatedSpot.add(
+                        `            ref( '${spot.variables[ 0 ]}' )`
+                    );
+                }
+
+                if ( spot.operators.length > 0 ) {
+                    generatedSpot.add( [
+                        ',\n',
+                        `            ${spot.generateOperation()}`
+                    ] );
+                }
+
                 let optionMask = 0;
                 let options = [];
                 if ( spot.cache ) {
@@ -216,46 +245,26 @@ export class Figure {
                     options.push( 'LOOP' );
                 }
 
-                generatedSpot = sourceNode( [
-                    '    [\n'
-                ] );
 
                 if ( optionMask > 0 ) {
-                    generatedSpot.add(
-                        `                ${optionMask},${` // ${options.join( ', ' )}`}\n`
-                    );
-                }
-
-                if ( spot.length > 1 ) {
-                    const variables = spot.variables.map( x => `'${x}'` ).join( ', ' );
-                    generatedSpot.add( [
-                        '                [ ', variables, ' ]'
-                    ] );
-                } else {
-                    generatedSpot.add(
-                        `                '${spot.variables[ 0 ]}'`
-                    );
-                }
-
-                if ( spot.operators.length > 0 ) {
                     generatedSpot.add( [
                         ',\n',
-                        `                ${spot.generateOperation()}`
+                        `            ${optionMask}${` // ${options.join( ', ' )}`}`
                     ] );
                 }
-                generatedSpot.add( '\n            ]' );
+                generatedSpot.add( '\n        ]' );
             } else if ( 0 === spot.operators.length ) {
                 continue;
             } else {
                 const variable = 0 === spot.length ?
                     '[]' :
-                    `'${spot.variables[ 0 ]}'`
+                    `ref( '${spot.variables[ 0 ]}' )`
                 ;
                 generatedSpot = sourceNode( [
                     '    [\n',
-                    `                ${variable},\n`,
-                    `                ${spot.generateOperation()}`,
-                    '\n            ]'
+                    `            ${variable},\n`,
+                    `            ${spot.generateOperation()}`,
+                    '\n        ]'
                 ] );
             }
 
@@ -263,7 +272,7 @@ export class Figure {
                 generatedSpot
             );
         }
-        return sourceNode( null, parts ).join( ',\n        ' );
+        return sourceNode( null, parts ).join( ',\n    ' );
     }
 
     generateBlocks() {
@@ -274,13 +283,13 @@ export class Figure {
                 const block = this.blocks[ componentRef ];
                 if ( 0 === block.length ) {
                     parts.push( sourceNode(
-                        `        const ${componentRef} = {};`
+                        `    const ${componentRef} = {};`
                     ) );
                 } else {
                     parts.push( sourceNode( [
-                        `        const ${componentRef} = {\n`,
+                        `    const ${componentRef} = {\n`,
                         block.join( ',\n' ), '\n',
-                        '        };'
+                        '    };'
                     ] ) );
                 }
             } );
@@ -324,9 +333,6 @@ export class Figure {
     }
 
     getPathToDocument() {
-        if ( this.thisRef ) {
-            return this.parent ? '_this.owner' : '_this';
-        }
         return this.parent ? 'this.owner' : 'this';
     }
 

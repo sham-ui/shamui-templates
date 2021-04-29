@@ -32,7 +32,6 @@ export default {
 
         const variablesOfExpression = collectVariables( figure.getScope(), node.cond );
 
-        figure.thisRef = true;
         figure.addRuntimeImport( 'cond' );
 
         if ( variablesOfExpression.length > 0 ) {
@@ -40,7 +39,7 @@ export default {
                 sourceNode( node.loc, [
                     '                ',
                     node.otherwise ? 'result = ' : '',
-                    `cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                    `cond( this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
                         node.cond ), `, ${figure.getPathToDocument()} )`, node.otherwise ? ';' : ''
                 ] )
             );
@@ -49,7 +48,7 @@ export default {
                 figure.spot( variablesOfExpression ).add(
                     sourceNode( node.loc, [
                         '                ',
-                        `cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} );`
+                        `cond( this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} );`
                     ] )
                 ).declareVariable( 'result' );
             }
@@ -58,7 +57,7 @@ export default {
                 sourceNode( node.loc, [
                     '            ',
                     node.otherwise ? 'result = ' : '',
-                    `cond( _this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
+                    `cond( this, ${placeholder}, ${childNameForThen}, ${templateNameForThen}, `, compile(
                         node.cond ), `, ${figure.getPathToDocument()} )`, node.otherwise ? ';' : ''
                 ] )
             );
@@ -67,7 +66,7 @@ export default {
                 figure.addOnUpdate(
                     sourceNode( node.loc, [
                         '           ',
-                        `cond( _this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`,
+                        `cond( this, ${placeholder}, ${childNameForOtherwise}, ${templateNameForOtherwise}, !result, ${figure.getPathToDocument()} )`,
                         node.otherwise ? ';' : ''
                     ] )
                 ).declareVariable( 'result' );
