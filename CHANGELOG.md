@@ -1,3 +1,7 @@
+## 5.0.0-alpha.2
+* Update dependencies
+* Extract configs from package.json
+
 ## 5.0.0-alpha.1
 * Generate function for `Component` factory
 * Changes for usage `ref` from `sham-ui-macro` 

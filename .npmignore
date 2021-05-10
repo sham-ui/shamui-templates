@@ -8,3 +8,8 @@ README.md
 testem.json
 .eslintrc.js
 .travis.yml
+.babel-plugin-macrosrc.js
+.babelrc
+.browserslistrc
+jest.config.js
+yarn-error.log

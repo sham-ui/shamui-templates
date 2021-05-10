@@ -3,7 +3,7 @@ import setupUnsafe from 'sham-ui-unsafe';
 import { Compiler } from '../src/index';
 import { sourceNode } from '../src/compiler/sourceNode';
 import { transformSync as babelTransform } from '@babel/core';
-import rootPackage from '../package.json';
+import findBabelConfig from 'find-babel-config';
 
 function transformSync( code, config ) {
     return babelTransform( code, config );
@@ -43,7 +43,11 @@ export function compile( strings ) {
             strings.join( '\n' ).trim()
         )
     );
-    const { code } = transformSync( node.toString(), rootPackage.babel );
+    const { config } = findBabelConfig.sync( process.cwd() );
+    const { code } = transformSync( node.toString(), {
+        ...config,
+        filename: 'dummy.sht'
+    } );
     return evalComponent( code );
 }
 
@@ -60,7 +64,11 @@ export function compileWithOptions( options ) {
                 strings.join( '\n' ).trim()
             )
         );
-        const { code } = transformSync( node.toString(), rootPackage.babel );
+        const { config } = findBabelConfig.sync( process.cwd() );
+        const { code } = transformSync( node.toString(), {
+            ...config,
+            filename: 'dummy.sht'
+        } );
         return evalComponent( code );
     };
 }
@@ -73,7 +81,11 @@ export function compileAsSFC( strings ) {
             strings.join( '\n' ).trim()
         )
     );
-    const { code } = transformSync( node.toString(), rootPackage.babel );
+    const { config } = findBabelConfig.sync( process.cwd() );
+    const { code } = transformSync( node.toString(), {
+        ...config,
+        filename: 'dummy.sfc'
+    } );
     return evalComponent( code );
 }
 
