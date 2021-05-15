@@ -22,7 +22,6 @@ export class Figure {
         this.onRemove = [];
         this.blocks = {};
         this.domRef = false;
-        this.requireDefaultNeed = true;
         this.runtimeImports = new Set();
         if ( parent === null ) {
             this.runtimeImports.add( 'Component' );
@@ -31,12 +30,6 @@ export class Figure {
 
     generate() {
         let sn = sourceNode( '' );
-
-        if ( this.imports.length > 0 && this.requireDefaultNeed ) {
-
-            // eslint-disable-next-line max-len
-            sn.add( 'function __requireDefault( obj ) { return obj && obj.__esModule ? obj.default : obj; }\n\n' );
-        }
 
         if ( null === this.parent ) {
             sn.add( sourceNode( 'import { ref } from \'sham-ui-macro/babel.macro\';\n' ) );
@@ -374,9 +367,8 @@ export class Figure {
         this.renderActions.push( action );
     }
 
-    addImport( source, requireDefaultNeed ) {
+    addImport( source ) {
         this.imports.push( source );
-        this.requireDefaultNeed = requireDefaultNeed;
     }
 
     addRuntimeImport( name ) {

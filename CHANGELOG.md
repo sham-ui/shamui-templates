@@ -1,3 +1,6 @@
+## 5.0.0-alpha.3
+* Fix imports (now use ES imports all time)
+
 ## 5.0.0-alpha.2
 * Update dependencies
 * Extract configs from package.json

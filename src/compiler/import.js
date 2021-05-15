@@ -5,14 +5,12 @@ export default {
     /**
      * @return {null}
      */
-    ImportStatement: ( { node, figure, options } ) => {
+    ImportStatement: ( { node, figure } ) => {
         const importNode = sourceNode( node.loc,
-            options.asSingleFileComponent ?
-                `import ${node.identifier.name} from ${node.path.value};` :
-                `const ${node.identifier.name} = __requireDefault( require( ${node.path.value} ) );`
+            `import ${node.identifier.name} from ${node.path.value};`
         );
 
-        figure.root().addImport( importNode, !options.asSingleFileComponent );
+        figure.root().addImport( importNode );
 
         figure.addToScope( node.identifier.name );
 
