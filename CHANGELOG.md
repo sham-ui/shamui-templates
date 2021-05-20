@@ -1,3 +1,6 @@
+## 5.0.0-alpha.4
+* Update sham-ui-macro & usage
+
 ## 5.0.0-alpha.3
 * Fix imports (now use ES imports all time)
 
