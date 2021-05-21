@@ -32,7 +32,7 @@ export class Figure {
         let sn = sourceNode( '' );
 
         if ( null === this.parent ) {
-            sn.add( sourceNode( 'import ref from \'sham-ui-macro/ref.macro\';\n' ) );
+            sn.add( sourceNode( 'import { ref } from \'sham-ui-macro/ref.macro\';\n' ) );
         }
 
         if ( this.runtimeImports.size > 0 ) {
