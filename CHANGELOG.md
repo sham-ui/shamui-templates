@@ -1,3 +1,6 @@
+## 5.0.0-alpha.7
+* Update sham-ui-macro
+
 ## 5.0.0-alpha.6
 * Update sham-ui
 

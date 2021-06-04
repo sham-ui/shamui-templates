@@ -5400,10 +5400,10 @@ set-value@^2.0.0:
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
 
-sham-ui-macro@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/sham-ui-macro/-/sham-ui-macro-3.2.0.tgz#d370a215035a755c2a4a2a2b10a547484d9ef651"
-  integrity sha512-fLxjQ31+OwJF5nzUs0o7dcub0MnPvhFCA3fj/NmUcMLmAFALKyAnkNk9DOrSS1A9F32NiaBdUle6EhhUyztTPg==
+sham-ui-macro@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/sham-ui-macro/-/sham-ui-macro-3.3.0.tgz#3bef7d44b0488625258430a35a30fbfdf23d2bdf"
+  integrity sha512-nhEMoI5DOfgnwbN+PmYWMJRZ3IxIA6T0WmliOpm4O8kMDGRo9MzVWJn+zZijzy8YK7RzzMV0k8zJpZGNiLnxQw==
   dependencies:
     babel-generator "^6.26.1"
     babel-macros "^1.0.2"
