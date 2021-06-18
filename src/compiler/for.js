@@ -3,6 +3,16 @@ import { collectVariables } from './variable';
 import { isSingleChild, esc, notNull } from '../utils';
 import { Figure } from '../figure';
 
+function wrapWithRef( options ) {
+    const items = [];
+    const res = JSON.parse( esc( options ) );
+
+    for ( let key in res ) {
+        items.push( `${key}: ref( '${res[ key ]}' )` );
+    }
+    return `{${items.join( ', ' )}}`;
+}
+
 export default {
     ForStatement: ( { parent, node, figure, compile } ) => {
         node.reference = null;
@@ -34,7 +44,7 @@ export default {
                     compile( node.expr ),
                     ', ',
                     (
-                        node.options === null ? 'null' : esc( node.options )
+                        node.options === null ? 'null' : wrapWithRef( node.options )
                     ),
                     `, ${figure.getPathToDocument()}`,
                     ' )'
@@ -47,7 +57,7 @@ export default {
                     compile( node.expr ),
                     ', ',
                     (
-                        node.options === null ? 'null' : esc( node.options )
+                        node.options === null ? 'null' : wrapWithRef( node.options )
                     ),
                     `, ${figure.getPathToDocument()}`,
                     ' )'
