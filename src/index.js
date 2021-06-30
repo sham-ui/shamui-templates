@@ -3,6 +3,7 @@ import { compile } from './compiler';
 import { entity } from './transform/entity';
 import { defaultBlock } from './transform/defaultblock';
 import { sfc } from './transform/sfc';
+import { thisDollarSign } from './transform/this-dollar-sign';
 import { whitespace } from './optimize/whitespace';
 import { getTemplateName } from './utils';
 import { drawGraph } from './graph';
@@ -14,14 +15,14 @@ export class Compiler {
             asSingleFileComponent: false,
             removeDataTest: true
         }, options );
-        this.transforms = [ whitespace, entity, defaultBlock, sfc ];
+        this.transforms = [ whitespace, entity, thisDollarSign, defaultBlock, sfc ];
         this.globals = [
             'window',
             'Array',
             'Object',
             'Math',
             'JSON',
-            'ref'
+            '$'
         ];
     }
 

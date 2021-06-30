@@ -9,7 +9,7 @@ export default {
             sourceNode( node.loc,
                 [
                     '                    ',
-                    'this.__data__[ ref( \'', node.identifier.name, '\' ) ] = ',
+                    'this.__data__[ $( \'', node.identifier.name, '\' ) ] = ',
                     compile( node.expression )
                 ]
             )

@@ -46,7 +46,7 @@ export default {
                 let [ expr ] = compileToExpression( figure, attr, compile ); // TODO: Add support for default value in custom tag attributes attr={{ value || 'default' }}.
                 variables = variables.concat( collectVariables( figure.getScope(), expr ) );
 
-                let property = sourceNode( node.loc, [ `[ ref( '${attr.name}' ) ]: ${compile( expr )}` ] );
+                let property = sourceNode( node.loc, [ `[ $( '${attr.name}' ) ]: ${compile( expr )}` ] );
                 data.push( property );
 
             }

@@ -8,7 +8,7 @@ function wrapWithRef( options ) {
     const res = JSON.parse( esc( options ) );
 
     for ( let key in res ) {
-        items.push( `${key}: ref( '${res[ key ]}' )` );
+        items.push( `${key}: $( '${res[ key ]}' )` );
     }
     return `{${items.join( ', ' )}}`;
 }

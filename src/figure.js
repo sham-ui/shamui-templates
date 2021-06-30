@@ -32,7 +32,7 @@ export class Figure {
         let sn = sourceNode( '' );
 
         if ( null === this.parent ) {
-            sn.add( sourceNode( 'import { ref } from \'sham-ui-macro/ref.macro\';\n' ) );
+            sn.add( sourceNode( 'import { $, this$ } from \'sham-ui-macro/ref.macro\';\n' ) );
         }
 
         if ( this.runtimeImports.size > 0 ) {
@@ -210,13 +210,13 @@ export class Figure {
                 ] );
 
                 if ( spot.length > 1 ) {
-                    const variables = spot.variables.map( x => `ref( '${x}' )` ).join( ', ' );
+                    const variables = spot.variables.map( x => `$( '${x}' )` ).join( ', ' );
                     generatedSpot.add( [
                         '            [ ', variables, ' ]'
                     ] );
                 } else {
                     generatedSpot.add(
-                        `            ref( '${spot.variables[ 0 ]}' )`
+                        `            $( '${spot.variables[ 0 ]}' )`
                     );
                 }
 
@@ -251,7 +251,7 @@ export class Figure {
             } else {
                 const variable = 0 === spot.length ?
                     '[]' :
-                    `ref( '${spot.variables[ 0 ]}' )`
+                    `$( '${spot.variables[ 0 ]}' )`
                 ;
                 generatedSpot = sourceNode( [
                     '    [\n',

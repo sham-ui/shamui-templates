@@ -35,7 +35,7 @@ export default {
         figure.addRuntimeImport( 'insert' );
         parent.addBlock(
             sourceNode( node.loc, [
-                `        [ ref( '${blockName}' ) ]: ( node, block ) => `,
+                `        [ $( '${blockName}' ) ]: ( node, block ) => `,
                 `insert( block, node, ${childName}, ${templateName}, this.dataForBlock(), ${figure.getPathToDocument()}, this.blocks )`
             ] )
         );
