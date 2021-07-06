@@ -1,3 +1,6 @@
+## 5.0.0-alpha.10
+* Update dependencies
+
 ## 5.0.0-alpha.9
 * Add transformer for `{{this$.foo}}` expression (transform to `this[ ref('foo' )])`
 * Upgrage code to new `sham-ui-macro`
