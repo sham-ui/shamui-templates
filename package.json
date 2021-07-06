@@ -37,7 +37,7 @@
     "eslint-plugin-jest": "^21.26.0",
     "find-babel-config": "^1.2.0",
     "jest": "^24.8.0",
-    "jest-runner-eslint": "^0.7.1",
+    "jest-runner-eslint": "^0.9.0",
     "jison": "^0.4.17",
     "preprocessor": "^1.4.0",
     "sham-ui-unsafe": "^0.0.1",
