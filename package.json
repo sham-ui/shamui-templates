@@ -17,7 +17,7 @@
     "asciitree": "^1.0.2",
     "sham-ui": "5.0.0-alpha.5",
     "sham-ui-macro": "^3.5.0",
-    "source-map": "^0.5.7"
+    "source-map": "^0.7.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
